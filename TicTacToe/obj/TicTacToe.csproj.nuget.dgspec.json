@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jonat\\Documents\\Coding\\CLASS PROJECTS\\MAJOR PROJECTS\\Array Projects II\\TicTacToe\\TicTacToe.csproj": {}
+    "C:\\Users\\jonat\\Documents\\GitHub\\MSCodingProjects\\TicTacToe\\TicTacToe.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jonat\\Documents\\Coding\\CLASS PROJECTS\\MAJOR PROJECTS\\Array Projects II\\TicTacToe\\TicTacToe.csproj": {
+    "C:\\Users\\jonat\\Documents\\GitHub\\MSCodingProjects\\TicTacToe\\TicTacToe.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jonat\\Documents\\Coding\\CLASS PROJECTS\\MAJOR PROJECTS\\Array Projects II\\TicTacToe\\TicTacToe.csproj",
+        "projectUniqueName": "C:\\Users\\jonat\\Documents\\GitHub\\MSCodingProjects\\TicTacToe\\TicTacToe.csproj",
         "projectName": "TicTacToe",
-        "projectPath": "C:\\Users\\jonat\\Documents\\Coding\\CLASS PROJECTS\\MAJOR PROJECTS\\Array Projects II\\TicTacToe\\TicTacToe.csproj",
+        "projectPath": "C:\\Users\\jonat\\Documents\\GitHub\\MSCodingProjects\\TicTacToe\\TicTacToe.csproj",
         "packagesPath": "C:\\Users\\jonat\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jonat\\Documents\\Coding\\CLASS PROJECTS\\MAJOR PROJECTS\\Array Projects II\\TicTacToe\\obj\\",
+        "outputPath": "C:\\Users\\jonat\\Documents\\GitHub\\MSCodingProjects\\TicTacToe\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
