@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>7 Day Forecast</title>        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="resources/styles.css">
+    </head>
+    <body onresize="UpdateImageSizes()">
+        <div class="forecastTable">
+            <div class="tableHeader">
+                <h1>7 Day Forecast</h1>
+            </div>
+            <div class="forecast">
+                <span class="blankSpot blankslot"></span>
+                <span class="dayNames"></span>
+                <span class="dayNames"></span>
+                <span class="dayNames"></span>
+                <span class="dayNames"></span>
+                <span class="dayNames"></span>
+                <span class="dayNames"></span>
+                <span class="dayNames"></span>
+                <span id="day" class="title">Day</span>
+                <span value="0"class="daysForecasts periods"></span>
+                <span value="2"class="daysForecasts periods"></span>
+                <span value="4"class="daysForecasts periods"></span>
+                <span value="6"class="daysForecasts periods"></span>
+                <span value="8"class="daysForecasts periods"></span>
+                <span value="10"class="daysForecasts periods"></span>
+                <span value="12"class="daysForecasts periods"></span>
+                <span id="night" class="title">Night</span>
+                <span value="1" class="nightsForecasts periods"></span>
+                <span value="3" class="nightsForecasts periods"></span>
+                <span value="5" class="nightsForecasts periods"></span>
+                <span value="7" class="nightsForecasts periods"></span>
+                <span value="9" class="nightsForecasts periods"></span>
+                <span value="11" class="nightsForecasts periods"></span>
+                <span value="13" class="nightsForecasts periods"></span>            
+
+                <span class="blankSpot empty"></span>
+                <span class="hi-low"></span>
+                <span class="hi-low"></span>
+                <span class="hi-low"></span>
+                <span class="hi-low"></span>
+                <span class="hi-low"></span>
+                <span class="hi-low"></span>
+                <span class="hi-low"></span>
+            </div>
+        </div>
+        <div id="specific" class="display">
+            
+        </div>
+        
+        <script src="resources/weather.js" async defer></script>
+    </body>
+</html>

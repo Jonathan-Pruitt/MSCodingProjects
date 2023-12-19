@@ -1,0 +1,243 @@
+/*
+#ffddee (light pink)
+#9661ff (light purple)
+#f4ff94 (light yellow)
+#c4e6ff (gray-blue)
+#668196 (green-blue)
+#99d2ff (deep-light-blue)
+#4c3677 (med-purple)
+#1c1324 (dark purple) [background/blackborder]
+
+*/
+* {
+    font-family: monospace;
+    border-radius: 5px;    
+    font-weight: bolder;
+    font-size: 90%;
+    color: inherit;
+    -webkit-text-stroke: inherit;
+}
+
+body {
+    background-color: #1c1324;
+    color: #4c3677;
+    -webkit-text-stroke: 0.25px #ffddee;
+}
+
+h1 {
+    font-size: 250%;
+    font-family: sans-serif;
+    -webkit-text-stroke: 0px;
+    margin-block : 0.5rem 0.5rem;
+    color: inherit;
+}
+
+b {
+    font-size: 200%;
+    -webkit-text-stroke: inherit;
+    color: #f4ff94;
+}
+
+p {
+    font-size: 200%;
+    color: inherit;
+    -webkit-text-stroke: .15px #ffddee;
+}
+
+img {
+    border: 3px ridge #ffddee;
+    margin-right: 5px;
+    vertical-align: middle;
+    width: 128px;
+    height: 128px;
+    border-radius: 15px;
+}
+
+span {
+    font-size: 200%;
+}
+
+strong {
+    font-size: 135%;
+    -webkit-text-stroke: inherit;
+}
+
+.forecastTable {
+    width : 80%;
+    position: absolute;
+    top : 15%;
+    left : 50%;
+    transform: translate(-50%, -15%); 
+}
+
+.display {
+    position : absolute;
+    bottom : 5%;
+    left : 10%;    
+    color: #9661ff;
+    -webkit-text-stroke: .15px #ffddee;
+}
+
+.tableHeader {
+    margin : 0;
+    padding : 0;
+    text-align: center;
+    border: 1px solid #ffddee;
+    background-color: #668196;
+    width: 100%;
+}
+
+.forecast {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+#day, #night, .blankSpot {
+    border: 1px solid 8c008c; 
+    text-align: right;
+    font-size: 300%;
+    font-weight: bold;  
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
+.title {
+    border : 1px solid #ffddee;    
+}
+
+#day {
+    background-color: #99d2ff;
+}
+
+#night {
+    background-color: #4c3677;
+}
+
+.dayNames, .daysForecasts, .nightsForecasts {
+    border: 1px solid 8c008c;  
+    text-align: center;
+}
+
+.daysForecasts > b {
+    color: inherit;
+}
+
+.nightsForecasts, .hi-low, #night {
+    color: #f4ff94;
+    -webkit-text-stroke: 1px #4c3677;
+}
+
+.nightsForecasts > strong, .hi-low > strong {
+    color: inherit;
+}
+
+.dayNames, .blankslot {
+    font-size: 300%;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items:end;
+    background-color: #9661ff;
+    -webkit-text-stroke: 0px;
+    margin-inline: 2px 2px;
+    color: #c4e6ff;
+}
+
+.periods {
+    text-align : left;
+    padding: 3%;
+    font-size: 200%; 
+    /* margin-inline: 2px 2px; */
+    margin: 1px 2px;
+    border-left: 1.5px solid #f4ff94;
+    border-right: 1.5px solid #f4ff94;
+}
+
+.periods:hover {
+    background-color: #ffffff55;
+    background-blend-mode: color;
+    transition: background-color linear .2s;
+}
+
+.hi-low {
+    border: 1px solid #ffddee;
+    padding: 3px;
+    font-size: 200%;
+    background-color: #1c1324;
+    white-space: nowrap;
+}
+
+.empty, .blankslot {
+    background-color: #1c1324;
+    border: 0;
+}
+
+.day-storm {
+    background: url(./images/day-storm.bmp);
+    background-repeat: no-repeat;
+}
+.day-rainy {
+    background: url(./images/day-rain.bmp);
+    background-repeat: no-repeat;
+}
+
+.day-partlycloudy {
+    background: url(./images/day-partialcloud.bmp);
+    background-repeat: no-repeat;
+}
+
+.day-cloudy {
+    background: url(./images/daycloud.bmp);
+    background-repeat: no-repeat;
+}
+
+.day-sunny {
+    background: url(./images/day-sun.bmp);
+    background-repeat: no-repeat;
+}
+
+.day-clear {
+    background: url(./images/day-clear.bmp);
+    background-repeat: no-repeat;
+}
+
+.day-none {
+    background: url(./images/day-clear.bmp);
+    background-repeat: no-repeat;
+}
+
+.night-storm {
+    background: url(./images/night-storm.bmp);
+    background-repeat: no-repeat;
+}
+
+.night-rainy {
+    background: url(./images/night-rain.bmp);
+    background-repeat: no-repeat;
+}
+
+.night-partlycloudy {
+    background: url(./images/night-partialcloud.bmp);
+    background-repeat: no-repeat;
+}
+
+.night-cloudy {
+    background: url(./images/night-cloud.bmp);
+    background-repeat: no-repeat;
+}
+
+.night-sunny {
+    background: url(./images/night-clear.bmp);
+    background-repeat: no-repeat;
+}
+
+.night-clear {
+    background: url(./images/night-clear.bmp);
+    background-repeat: no-repeat;
+}
+
+.night-none {
+    background: url(./images/night-none.bmp);
+    background-repeat: no-repeat;
+}
