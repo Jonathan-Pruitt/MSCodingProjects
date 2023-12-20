@@ -1,0 +1,135 @@
+.calculator-keys {
+    display               : grid;            /* this will make the div with this class behave like a grid*/
+    grid-template-columns : 1fr 1fr 1fr 1fr;  /*4 fractional units - Each row contains 4 columns of 1 unit each */
+    grid-gap              : 20px;            /*space between columns*/
+    padding               : 20px;            /*space around columns*/
+}
+
+.equal-sign {
+    background-color  : #2e86c0;
+    border-color      : #337cac;
+    color             : #fff;
+    height            : 100%;
+    grid-row-start    : 2;
+    grid-column-start : 4;
+    grid-row-end      : 6; /*WTF*/
+    grid-column-end   : 4;
+}
+
+html {
+    font-size  : 50%;
+    box-sizing : border-box;
+    background-color: #d6ffe9;
+    /*box-sizing --- property sets how the total width and height of an element is calculated.*/
+    /*border-box --- Tells the browser to account for any border and padding in the values you specify for an element's width and height. If you set an element's width to 100 pixels, that 100 pixels will include any border or padding you added, and the content box will shrink to absorb that extra width. This typically makes it much easier to size elements*/
+}
+
+.calculator {
+    border        : 5px solid #884488;
+    background-color: #ddaadd;
+    border-radius : 5px;
+    position      : absolute;
+    top           : 50%;
+    left          : 50%;
+    transform     : translate(-50%, -50%); /*move the div with this class 50% of it's width to the left and 50% of it height up*/
+    width         : 400px;
+}
+
+.calculator-screen {
+    width            : 371px;
+    font-size        : 5rem;
+    height           : 80px;
+    border           : none;
+    background-color : #252525;
+    color            : #fff;
+    text-align       : right;
+    padding-right    : 20px;
+    padding-left     : 10px;
+}
+
+button {
+    height           : 60px;
+    border-radius    : 10px;
+    border           : 1px solid #c4c4c4;
+    background-color : #fff;
+    font-size        : 500%;
+    color            : #333;
+}
+
+button:hover {
+    background-color : #eaeaea;
+}
+
+button:active {
+    border : 3px solid #cacaca;
+    background-color : #ddd;
+}
+
+.operator {
+    color : #337cac;
+    font-size: 300%;
+    font-weight: bolder;
+}
+
+.all-clear {
+    background-color : #f0595f;
+    border-color     : #b0353a;
+    color            : #fff;
+}
+
+.all-clear:hover {
+    background-color : #f17377;
+}
+
+.all-clear:active {
+    border : 3px solid #c0293f;
+    background-color: #e16367;
+}
+
+.equal-sign:hover {
+    background-color: #4e9ed4;
+}
+
+.equal-sign:active {
+    border : 3px solid #0566a0;
+    background-color: #3e8cd4;
+}
+
+.sidebar {
+    border: 5px solid #773399;
+    background-color: rgb(240, 246, 205);
+    border-radius: 5px;
+    position: absolute;
+    right : 10px;
+    height: 100%;
+    width: 25%;
+    font-family: monospace;
+}
+
+.clicked {
+    background-color: rgb(215, 221, 180);
+}
+
+.unclicked {
+    background-color: rgb(240, 246, 205);
+}
+
+.sidebar > h1 {
+    font-size: 5rem;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 5px solid #773399;
+    margin: 0;
+}
+
+ul {
+    padding : 0;
+    margin : 0;
+    text-indent: 5px;
+    font-size: 400%;
+    list-style-type: none;
+}
+
+li {
+    padding : 5px 0 5px 0;
+}

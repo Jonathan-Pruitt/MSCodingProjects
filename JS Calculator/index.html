@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="resources/calc.css" rel="stylesheet" type="text/css" media="all">
+        <title>JavaScript Calculator</title>
+    </head>
+
+    <body>
+        <div class="calculator">
+            <!-- CALC SCREEN -->
+            <input type="text" class="calculator-screen" id="display" value="0" disabled />
+
+            <!-- CALC KEYS -->
+            <div class="calculator-keys">
+                <button type="button" class="operator" value="+" >&plus;</button>
+                <button type="button" class="operator" value="-" >&minus;</button>
+                <button type="button" class="operator" value="*" >&times;</button>
+                <button type="button" class="operator" value="/" >&sol;</button>
+
+                <button type="button" class="numbers" value="7" >7</button>
+                <button type="button" class="numbers" value="8" >8</button>
+                <button type="button" class="numbers" value="9" >9</button>
+
+                <button type="button" class="numbers" value="4" >4</button>
+                <button type="button" class="numbers" value="5" >5</button>
+                <button type="button" class="numbers" value="6" >6</button>
+
+                <button type="button" class="numbers" value="1" >1</button>
+                <button type="button" class="numbers" value="2" >2</button>
+                <button type="button" class="numbers" value="3" >3</button>
+
+                <button type="button" class="numbers" value="0" >0</button>
+                <button type="button" class="numbers" value="." >.</button>
+                <button type="button" class="all-clear" value="all-clear">AC</button>
+
+                <button type="button" class="equal-sign" value="=">=</button>
+            </div>
+        </div>
+        <span class="sidebar">
+            <h1>History</h1>
+            <ul id="history">
+                
+            </ul>
+        </span>
+
+        <script type="text/javascript" src="resources/calc.js"></script>
+    </body>
+
+</html>
