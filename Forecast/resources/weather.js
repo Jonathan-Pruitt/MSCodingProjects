@@ -26,9 +26,7 @@ function getLocation() {
 
 function showPosition(position) {
     var latitude  = position.coords.latitude;
-    var longitude = position.coords.longitude;
-
-    console.log(`Latitude: ${position.coords.latitude} : Longitude: ${position.coords.longitude}`);
+    var longitude = position.coords.longitude;    
 
     getGridRequest(latitude,longitude);
 }//end function
@@ -52,13 +50,9 @@ function getGridRequest(latitude,longitude) {
 function checkStatus() {
     //MAKE CERTAIN RESPONSE IS OK AND READY 
     if (this.status === 200 && this.readyState === 4) {
-        //DEBUG
-        console.log(this.responseText);
 
         //PARSE THE STRING BACK INTO AN OBJECT
         var data = JSON.parse(this.responseText);
-
-        console.log(data.properties.gridY);
 
         var office = data.properties.gridId;
         var gridX  = data.properties.gridX;
@@ -92,8 +86,6 @@ function getHighAndLow (office, gridX, gridY) {
 function checkHighLowForecast(office, gridX, gridY) {
     //MAKE CERTAIN RESPONSE IS OK AND READY 
     if (this.status === 200 && this.readyState === 4) {
-        //DEBUG
-        console.log(this.responseText);
 
         //PARSE THE STRING BACK INTO AN OBJECT
         var highLowForecast = JSON.parse(this.responseText);        
@@ -127,8 +119,6 @@ function getForecast(office,gridX,gridY) {
 function checkForcastStatus() {
     //MAKE CERTAIN RESPONSE IS OK AND READY 
     if (this.status === 200 && this.readyState === 4) {
-        //DEBUG
-        console.log(this.responseText);
 
         //PARSE THE STRING BACK INTO AN OBJECT
         var data = JSON.parse(this.responseText);
