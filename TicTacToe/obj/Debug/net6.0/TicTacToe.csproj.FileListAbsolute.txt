@@ -13,3 +13,18 @@ C:\Users\jonat\Documents\Coding\CLASS PROJECTS\MAJOR PROJECTS\Array Projects II\
 C:\Users\jonat\Documents\Coding\CLASS PROJECTS\MAJOR PROJECTS\Array Projects II\TicTacToe\obj\Debug\net6.0\TicTacToe.pdb
 C:\Users\jonat\Documents\Coding\CLASS PROJECTS\MAJOR PROJECTS\Array Projects II\TicTacToe\obj\Debug\net6.0\TicTacToe.genruntimeconfig.cache
 C:\Users\jonat\Documents\Coding\CLASS PROJECTS\MAJOR PROJECTS\Array Projects II\TicTacToe\obj\Debug\net6.0\ref\TicTacToe.dll
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\bin\Debug\net6.0\TicTacToe.exe
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\bin\Debug\net6.0\TicTacToe.deps.json
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\bin\Debug\net6.0\TicTacToe.runtimeconfig.json
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\bin\Debug\net6.0\TicTacToe.dll
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\bin\Debug\net6.0\TicTacToe.pdb
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\TicTacToe.csproj.AssemblyReference.cache
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\TicTacToe.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\TicTacToe.AssemblyInfoInputs.cache
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\TicTacToe.AssemblyInfo.cs
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\TicTacToe.csproj.CoreCompileInputs.cache
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\TicTacToe.dll
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\refint\TicTacToe.dll
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\TicTacToe.pdb
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\TicTacToe.genruntimeconfig.cache
+C:\Users\jonat\Documents\GitHub\MSCodingProjects\TicTacToe\obj\Debug\net6.0\ref\TicTacToe.dll
