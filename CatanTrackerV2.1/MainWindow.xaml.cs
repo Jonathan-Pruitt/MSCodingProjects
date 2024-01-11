@@ -26,7 +26,7 @@ namespace CatanTracker {
     public partial class MainWindow:Window {
 
         //UPDATE VERSION INFORMATION HERE
-        string version = "v2.1";
+        string version = "v2.2";
 
         //////NEEDS THOROUGH TESTING, BUT I THINK THIS VERSION NOW DISCERNS BETWEEN TOKEN/RESOURCE DUPES
         
@@ -661,6 +661,7 @@ namespace CatanTracker {
                 }
                 knightActive = false;
                 robberActive = false;
+                robberStage = 0;
                 viewLstBxSelection.Visibility = Visibility.Collapsed;
                 lblRobber.Content = $"{players[turnIndex].Name} bopped {selectedPlayer}";                  
                 EnableOptions();
