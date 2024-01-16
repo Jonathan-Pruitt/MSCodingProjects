@@ -9,8 +9,10 @@
 
   <ItemGroup>
     <None Remove="brick.jpg" />
+    <None Remove="catan.jpg" />
     <None Remove="gold.jpg" />
     <None Remove="ore.jpg" />
+    <None Remove="seafarers.jpg" />
     <None Remove="sheep.jpg" />
     <None Remove="wheat.jpg" />
     <None Remove="wood.jpg" />
@@ -18,8 +20,10 @@
 
   <ItemGroup>
     <Resource Include="brick.jpg" />
+    <Resource Include="catan.jpg" />
     <Resource Include="gold.jpg" />
     <Resource Include="ore.jpg" />
+    <Resource Include="seafarers.jpg" />
     <Resource Include="sheep.jpg" />
     <Resource Include="wheat.jpg" />
     <Resource Include="wood.jpg" />

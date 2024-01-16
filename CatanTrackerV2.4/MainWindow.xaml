@@ -1,20 +1,39 @@
-﻿<Window x:Class="CatanTracker.MainWindow"
+﻿<Window x:Name="mainWindow" x:Class="CatanTracker.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CatanTracker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="525" Width="800" ResizeMode="CanMinimize">
+        Title="MainWindow" Height="525" Width="800">
 
     <Grid>
+        <Grid Name="viewGameSelect" Visibility="Collapsed">
+            <Label Content="Select which version you're playing" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontFamily="Consolas" FontSize="30" FontWeight="Bold"/>
+            <Grid Margin="0,70,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Button Name="btnCatan" Click="btnGameSelect_Click">
+                    <Image Source="/catan.jpg"></Image>
+                </Button>
+                <Button Name="btnSeafarers" Grid.Column="1" Click="btnGameSelect_Click">
+                    <Image Source="/seafarers.jpg"></Image>
+                </Button>
+            </Grid>
+        </Grid>
         <Grid Name="viewBoardSetup" Visibility="Collapsed">
             <Image HorizontalAlignment="Left" Height="100" Margin="50,115,0,0" VerticalAlignment="Top" Width="72" Source="/brick.jpg"/>
             <Image HorizontalAlignment="Left" Height="100" Margin="50,230,0,0" VerticalAlignment="Top" Width="70" Source="/ore.jpg"/>
             <Image HorizontalAlignment="Left" Height="100" Margin="50,330,0,0" VerticalAlignment="Top" Width="70" Source="/sheep.jpg"/>
             <Image HorizontalAlignment="Left" Height="100" Margin="400,115,0,0" VerticalAlignment="Top" Width="70" Source="/wheat.jpg"/>
             <Image HorizontalAlignment="Left" Height="100" Margin="400,230,0,0" VerticalAlignment="Top" Width="70" Source="/wood.jpg"/>
-            <Image HorizontalAlignment="Left" Height="100" Margin="386,330,0,0" VerticalAlignment="Top" Width="100" Source="/gold.jpg"/>
+            <Image Name="imgGold" HorizontalAlignment="Left" Height="100" Margin="386,330,0,0" VerticalAlignment="Top" Width="100" Source="/gold.jpg"/>
             <TextBox Name="setupBrick" HorizontalAlignment="Left" Margin="130,145,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="239" Height="30" FontFamily="Consolas" FontSize="22"/>
             <TextBox Name="setupOre" HorizontalAlignment="Left" Margin="130,265,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="239" Height="30" FontFamily="Consolas" FontSize="22"/>
             <TextBox Name="setupSheep" HorizontalAlignment="Left" Margin="130,370,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="239" Height="30" FontFamily="Consolas" FontSize="22"/>
@@ -76,16 +95,25 @@
             <Label Name="lblVicPoints" Content="Victory Points: " HorizontalAlignment="Left" Margin="469,57,0,0" VerticalAlignment="Top" Width="101"/>
 
 
-            <Grid Name="viewMainLoopPostRollOptions" Visibility="Collapsed">
-                <Button Name="btnSettlement" Content="Buy Settlement" HorizontalAlignment="Left" Margin="402,122,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnSettlement_Click"/>
-                <Button Name="btnCity" Content="Buy City" HorizontalAlignment="Left" Margin="532,172,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnCity_Click"/>
-                <Button Name="btnRoad" Content="Buy Road" HorizontalAlignment="Left" Margin="532,122,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnRoad_Click"/>
-                <Button Name="btnDevCard" Content="Buy Develop Card" HorizontalAlignment="Left" Margin="402,172,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnDevCard_Click"/>
+            <Grid Name="viewMainLoopPostRollOptions" Visibility="Visible">
+                <Button Name="btnSettlement" Content="Buy Settlement" HorizontalAlignment="Left" Margin="336,122,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnSettlement_Click"/>
+                <Button Name="btnCity" Content="Buy City" HorizontalAlignment="Left" Margin="466,172,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnCity_Click"/>
+                <Button Name="btnRoad" Content="Buy Road" HorizontalAlignment="Left" Margin="466,122,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnRoad_Click"/>
+                <Button Name="btnDevCard" Content="Buy Develop Card" HorizontalAlignment="Left" Margin="336,172,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnDevCard_Click"/>
                 <Button Name="btnTurn" Content="End Turn" HorizontalAlignment="Left" Margin="720,438,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Click="btnTurn_Click"/>
-
+                <Grid Name="viewSeafarerOps">
+                    <Button Name="btnShip" Content="Buy Ship" HorizontalAlignment="Left" Margin="595,122,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnRoad_Click"/>
+                    <Button Name="btnMove" Content="Move Ship" HorizontalAlignment="Left" Margin="595,172,0,0" VerticalAlignment="Top" Height="40" Width="116" FontSize="13" Click="btnRoad_Click"/>
+                </Grid>
             </Grid>
-            <Button Name="btnKnight" Content="Play Knight" HorizontalAlignment="Left" Margin="402,238,0,0" VerticalAlignment="Top" FontSize="13" Height="40" Width="116" Click="btnKnight_Click"/>
-            <Button Name="btnVicPoint" Content="Play Victory Point" HorizontalAlignment="Left" Margin="532,238,0,0" VerticalAlignment="Top" FontSize="13" Height="40" Width="116" Click="btnVicPoint_Click"/>
+            <Button Name="btnKnight" Content="Play Knight" HorizontalAlignment="Left" Margin="336,238,0,0" VerticalAlignment="Top" FontSize="13" Height="40" Width="116" Click="btnKnight_Click"/>
+            <Button Name="btnVicPoint" HorizontalAlignment="Left" Margin="466,238,0,0" VerticalAlignment="Top" FontSize="13" Height="40" Width="116" Click="btnVicPoint_Click">
+                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" TextAlignment="Center">Victory Point Development Card</TextBlock>
+            </Button>
+            <Button Name="btnChit" HorizontalAlignment="Left" Margin="595,238,0,0" VerticalAlignment="Top" Height="40" Width="116" Click="btnChit_Click">
+                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center">Vic Point Chit</TextBlock>
+            </Button>
+
             <Button Name="btnGameOver" Content="Game Over" Margin="305,437,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Left" Width="77" Click="btnGameOver_Click"/>
             <Grid Name="viewLstBxSelection" Margin="402,305,0,0" Width="246" Height="155" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed">
                 <ListBox Name="lstBxSelection" Background="#FFF7F4C5" BorderBrush="#FF3B009E" Visibility="Collapsed"/>
@@ -99,15 +127,28 @@
                 <Button Name="p6" Content="Player 6" Margin="123,102,0,2" Height="51" Visibility="Collapsed" Click="WhackedButton_Click"></Button>
 
             </Grid>
-            <Label Name="lblRobber" Content="Enter the token number you blocked." HorizontalAlignment="Left" Margin="313,280,0,0" VerticalAlignment="Top" Width="474" FontWeight="Bold" Visibility="Collapsed"/>
+            <Label Name="lblRobber" Content="Enter the token number you blocked." HorizontalAlignment="Left" Margin="313,275,0,0" VerticalAlignment="Top" Width="474" FontWeight="Bold" FontSize="11" Visibility="Collapsed"/>
             <Label Name="lblTimer" Content="00:00:00" HorizontalAlignment="Left" Margin="700,10,0,0" VerticalAlignment="Top" FontSize="15" FontWeight="Bold"/>
             <Button Name="btnTimeControl" Content="PAUSE" HorizontalAlignment="Left" Margin="715,40,0,0" VerticalAlignment="Top" Click="btnTimeControl_Click"/>
             <Label Name="lblBonus" Content="" HorizontalAlignment="Left" Margin="400,85,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="15"/>
 
+            <Expander Name="expPlayers" Background="#FFCCDDCC" HorizontalAlignment="Right" ExpandDirection="Left" Height="Auto" Header="Players" Margin="0,0,0,0" VerticalAlignment="Center" Width="Auto" Expanded="Expander_Expanded" Collapsed="expPlayers_Collapsed" BorderBrush="Black">
+                <Grid Name="grdGameStats" Background="#FFCCEECC">
+                    <Grid.RowDefinitions>
+
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </Expander>
+
 
 
         </Grid>
-        <Grid Name="viewEndGame" Visibility="Visible" Margin="0,0,0,-14">
+        <Grid Name="viewEndGame" Visibility="Collapsed" Margin="0,0,0,-14">
             <Label Content="GAME RESULTS" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Consolas" FontSize="25" FontWeight="Bold"/>
 
             <Grid Name="grdGameResults" VerticalAlignment="Top" Height="42" Margin="0,40,0,0" Background="AliceBlue" ShowGridLines="True">
@@ -141,7 +182,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom">2</TextBlock>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,14,0,0" Grid.RowSpan="2">2</TextBlock>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Column="1">3</TextBlock>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Column="2">4</TextBlock>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Column="3">5</TextBlock>

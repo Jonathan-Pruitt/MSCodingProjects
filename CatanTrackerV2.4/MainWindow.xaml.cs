@@ -1,9 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using CatanTrackV2;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,11 +28,13 @@ namespace CatanTracker {
     public partial class MainWindow:Window {
 
         //UPDATE VERSION INFORMATION HERE
-        string version = "v2.2";
+        string version = "v2.4";
 
         //////NEEDS THOROUGH TESTING, BUT I THINK THIS VERSION NOW DISCERNS BETWEEN TOKEN/RESOURCE DUPES
         
         #region CLASS FIELDS
+        bool isCatan = false;
+        bool isSeafarers = false;
 
         Player[] players;
         GameBoard mainBoard;
@@ -79,11 +83,11 @@ namespace CatanTracker {
             rollButtons = GetRollButtons();
             whackedButtons = GetWhackedButtons();
 
-            viewBoardSetup.Visibility = Visibility.Visible;
+            viewGameSelect.Visibility = Visibility.Visible;
+            viewBoardSetup.Visibility = Visibility.Collapsed;
             viewPlayerStart.Visibility = Visibility.Collapsed;
             viewMainLoop.Visibility = Visibility.Collapsed;
             viewEndGame.Visibility = Visibility.Collapsed;
-            //viewEndGame.Visibility = Visibility.Visible;
 
         }//END MAIN
 
@@ -233,7 +237,7 @@ namespace CatanTracker {
             string text = resource.Content.ToString();
             
             if (mainBoard.Exists(pipViewArray[pipIndex], text)) {
-                ///// //////////////////////////////////////////////////////////////CHANGES START
+                
                 if (mainBoard.GetLocation(pipViewArray[pipIndex], text).IsDuplicate) {
                     Location[] check = mainBoard.GetDuplicatesByToken(pipViewArray[pipIndex]);
                     int index = 0;
@@ -249,9 +253,9 @@ namespace CatanTracker {
                         index = index == check.Length ? 0 : index;
                     }//END LOOP
                 } else {
-                    tempArray[pipIndex] = mainBoard.GetLocation(pipViewArray[pipIndex], text); ///(MOVE THIS OUTSIDE THE 'ELSE')////
+                    tempArray[pipIndex] = mainBoard.GetLocation(pipViewArray[pipIndex], text); 
                 }
-                ///// //////////////////////////////////////////////////////////////CHANGES END
+                
             } else {
                 SetError("This token does not correspond to the given resource");
                 return;
@@ -288,6 +292,9 @@ namespace CatanTracker {
                     //MOVE TO NEXT GAME PHASE
                     viewPlayerStart.Visibility = Visibility.Collapsed;
                     viewMainLoop.Visibility = Visibility.Visible;
+                    foreach (Player player in players) {
+                        player.OpeningSettlements = player.GetSettlements();
+                    }
                     InstantiateDispatchTimer();
                     mainBoard.StartGameTimer();
                     pipIndex = 0;
@@ -448,6 +455,7 @@ namespace CatanTracker {
             if (turnIndex >= players.Length) {
                 mainBoard.Round++;
                 turnIndex = 0;
+                mainBoard.AddRound(players, mainBoard.GetGameTime());
             }//END IF
             turnName.Content = $"{players[turnIndex].Name}'s Turn {mainBoard.Round}";
             string longestOrLargest = "";
@@ -531,11 +539,14 @@ namespace CatanTracker {
             if (robStage == 2) {                
                 txtPipSelect.Visibility = Visibility.Visible;
                 lblRobber.Content = "Enter the token number you blocked. (Enter 0 to BLOCK desert)";
+                if (isSeafarers) {
+                    lblRobber.Content += "\nOR\t[Enter 'P' to move Pirate]";
+                }
             }
 
             //SELECT TYPE OF RESOURCE BEING BLOCKED
             if (robStage == 3) {
-                string response = txtPipSelect.Text;
+                string response = txtPipSelect.Text.ToUpper();
                 if (response == "0") {
                     knightActive = false;
                     robberActive = false;
@@ -549,6 +560,25 @@ namespace CatanTracker {
                         viewMainLoopPostRollOptions.Visibility = Visibility.Visible;
                     }
                     EnableOptions();
+                    return;
+                } else if (response.Contains("P")) {
+
+                        //PLAYER IS MOVING PIRATE
+                    lblRobber.Content = $"Which player (if any) are you stealing from?";
+                    Player[] stealable = new Player[players.Length];
+                    for (int i = 0; i < players.Length; i++) {
+                        if (players[i] == players[turnIndex]) {
+                            stealable[i] = null;
+                        } else {
+                            stealable[i] = players[i];
+                        }
+                    }
+                    PopulateListBox(stealable, true);
+                    lstBxSelection.Items.Add("No One");
+                    txtPipSelect.Visibility = Visibility.Collapsed;
+                    lstBxSelection.Visibility = Visibility.Visible;
+                    txtPipSelect.Text = "";
+                    robberStage = 4;
                     return;
                 }
                 string validText = "";
@@ -689,14 +719,14 @@ namespace CatanTracker {
             }
         }//END METHOD
 
-        ///////////////////////////////////////////////////////////////////////////////TESTING////////////////////////
+        
         private Player[] GetPlayersByLocation(Location target) {
             int index = 0;
             //Player[] tempPlayers = new Player[testPlayers.Length];
             //foreach (Player player in testPlayers) {
             Player[] tempPlayers = new Player[players.Length];
             foreach (Player player in players) {
-                if (player.IsOnLocation(target)) { tempPlayers[index++] = player; } /////////////////////NEED TO CHANGE PLAYER-ARRAY DATA
+                if (player.IsOnLocation(target)) { tempPlayers[index++] = player; }
             }
             Player[] foundPlayers = new Player[index];
             for (int i = 0; i < foundPlayers.Length; i++) {
@@ -704,13 +734,21 @@ namespace CatanTracker {
             }
             return foundPlayers;
         }
-        ///////////////////////////////////////////////////////////////////////////////TESTING////////////////////////
+        
         
         private void btnVicPoint_Click(object sender,RoutedEventArgs e) {
             players[turnIndex].AddVictoryPoint();
             lblVicPoints.Content = $"Victory Points: {players[turnIndex].VictoryPoints}";
             lblRobber.Visibility = Visibility.Visible;
             lblRobber.Content = $"{players[turnIndex].Name} played a victory point from their Development Cards";
+        }//END METHOD
+
+        private void btnChit_Click(object sender,RoutedEventArgs e) {
+            players[turnIndex].ChitPoints++;
+            players[turnIndex].AddVictoryPoint();
+            lblRobber.Visibility = Visibility.Visible;
+            lblRobber.Content = $"{players[turnIndex].Name} received a chit victory point.";
+            lblVicPoints.Content = $"Victory Points: {players[turnIndex].VictoryPoints}";
         }//END METHOD
 
         private void btnGameOver_Click(object sender,RoutedEventArgs e) {
@@ -723,6 +761,7 @@ namespace CatanTracker {
             mainBoard.StopGameTimer();
             TimeSpan turn = mainBoard.GetTurnTime();
             players[turnIndex].AddTurnTime(turn);
+            mainBoard.AddRound(players, mainBoard.GetGameTime());
 
             //ASK WHO WON IN A MESSAGE BOX OR SOMETHING
             bool winnerFound = false;
@@ -784,27 +823,47 @@ namespace CatanTracker {
             players[turnIndex].DevCardsBought++;
             lblRobber.Visibility = Visibility.Visible;
             lblRobber.Content = $"{players[turnIndex].Name} bought a Development Card";
-        }
+        }//END METHOD
 
         private void btnRoad_Click(object sender,RoutedEventArgs e) {
-            players[turnIndex].RoadCount++;
-            buyingRoad = true;
-            lblRobber.Visibility = Visibility.Visible;
-            lstBxSelection.Visibility = Visibility.Collapsed;
-
-
-            lblRobber.Content = $"What is {players[turnIndex].Name.ToUpper()}'s longest Road now?";
-            viewLstBxSelection.Visibility = Visibility.Visible;
-            txtPipSelect.Visibility = Visibility.Visible;
-            DisableOptions();
-        }
+            Button selection = sender as Button;
+            string action = "bought";
+            string item = "road";
+            MessageBoxResult isLonger = PauseAndAsk("Will this action affect the length of your LONGEST ROAD?", "Trade Route Action");
+            if (selection.Name == "btnRoad") {
+                players[turnIndex].RoadCount++;
+                lblRobber.Visibility = Visibility.Visible;
+                lstBxSelection.Visibility = Visibility.Collapsed;
+            } else if (selection.Name == "btnShip") {
+                players[turnIndex].ShipCount++;
+                lblRobber.Visibility = Visibility.Visible;
+                lstBxSelection.Visibility = Visibility.Collapsed;
+                item = "ship";
+            } else if (selection.Name == "btnMove") {
+                players[turnIndex].MovedShips++;
+                lblRobber.Visibility = Visibility.Visible;
+                lstBxSelection.Visibility = Visibility.Collapsed;
+                action = "moved";
+                item = "ship";
+            }
+            
+            if (isLonger == MessageBoxResult.Yes) {
+                buyingRoad = true;
+                lblRobber.Content = $"What is {players[turnIndex].Name.ToUpper()}'s longest Road now?";
+                viewLstBxSelection.Visibility = Visibility.Visible;
+                txtPipSelect.Visibility = Visibility.Visible;
+                DisableOptions();
+            } else {
+                lblRobber.Content = $"{players[turnIndex].Name} {action} a {item}.";
+            }
+        }//END METHOD
 
         private void btnSettlement_Click(object sender,RoutedEventArgs e) {
             lstBxSelection.Items.Clear();
             lstBxSelection.Visibility = Visibility.Collapsed;
             buyingSettlement = true;
             lblRobber.Visibility = Visibility.Visible;
-            lblRobber.Content = $"What are the number tokens adjacent to your settlement? (Separate with SPACE)";
+            lblRobber.Content = $"What are the number tokens adjacent to your settlement?\n\t[Enter 0 for desert]\t(Separate with SPACE)";
             viewLstBxSelection.Visibility = Visibility.Visible;
             txtPipSelect.Visibility = Visibility.Visible;
             txtPipSelect.MaxLength = 15;
@@ -843,7 +902,7 @@ namespace CatanTracker {
             //PopulateListBox with settlement options.
             lstBxSelection.Visibility = Visibility.Visible;
             
-            ///// /     ///////////////////////     //////////////////      //////////////      //////CHANGES START
+            
             string[] settlementOptions = players[turnIndex].GetSettlementsAsString();
             PopulateListBox(settlementOptions);
             //PopulateListBox(players[turnIndex].GetSettlementsAsString());
@@ -876,7 +935,7 @@ namespace CatanTracker {
                 if (pipViewArray.Length < 1) {return;}
 
                 for (int i = 0; i < pipViewArray.Length; i++) {
-                    if (pipViewArray[i] < 2 || pipViewArray[i] > 12 || pipViewArray[i] == 7) {                        
+                    if ((pipViewArray[i] < 2 || pipViewArray[i] > 12 || pipViewArray[i] == 7) && pipViewArray[i] != 0) {                        
                         return;
                     }
                 }
@@ -903,7 +962,7 @@ namespace CatanTracker {
                     phase = 2;
                 }
 
-                if (phase == 1) {       ///// //////////////////////////////////////////////////////////////CHANGES START
+                if (phase == 1) {       
                     /*
                     lblRobber.Content = $"Which resource is associated with token {pipViewArray[pipIndex]}?";
                     lstBxSelection.Items.Clear();
@@ -987,7 +1046,7 @@ namespace CatanTracker {
             if (mainBoard.LongestRoad != null) {
                 mainBoard.LongestRoad.HasLongestRoad = true;
             }
-            lblRobber.Content = $"{players[turnIndex].Name} bought a Road";
+            lblRobber.Content = $"{players[turnIndex].Name} extended their Trade Route.";
             lblVicPoints.Content = $"Victory Points: {players[turnIndex].VictoryPoints}";
             
             string longestOrLargest = "";
@@ -1099,6 +1158,9 @@ namespace CatanTracker {
             btnRoad.IsEnabled = false;
             btnGameOver.IsEnabled = false;
             btnTurn.IsEnabled = false;
+            btnChit.IsEnabled = false;
+            btnShip.IsEnabled = false;
+            btnMove.IsEnabled = false;
         }//END METHOD
 
         private void EnableOptions() {
@@ -1110,6 +1172,9 @@ namespace CatanTracker {
             btnDevCard.IsEnabled = true;
             btnRoad.IsEnabled = true;
             btnGameOver.IsEnabled = true;
+            btnChit.IsEnabled = true;
+            btnShip.IsEnabled = true;
+            btnMove.IsEnabled = true;
 
             if (!knightExpended) {
                 btnKnight.IsEnabled = true;
@@ -1140,7 +1205,10 @@ namespace CatanTracker {
 
         private string GetAllGameData() {
             string data = "";
-            data += "GAME STATS\nTOTAL GAME TIME, TOTAL ROUNDS, WINNER\n";
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+            TimeOnly startTime = TimeOnly.FromDateTime(DateTime.Now - mainBoard.GetGameTime());
+            string gameName = isSeafarers ? "SEAFARERS" : "STANDARD CATAN";
+            data += $"GAME STATS, {gameName}, {today}, {startTime}\nTOTAL GAME TIME, TOTAL ROUNDS, WINNER\n";
             data += $"{mainBoard.GetGameTime().ToString(@"hh\:mm\:ss")}, {mainBoard.Round}, {mainBoard.Winner.Name}\n\n";
             data += "ROLL DATA\n";
             data += $"2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12\n";
@@ -1149,11 +1217,173 @@ namespace CatanTracker {
             }
             data += "\b\b\n\n";
             data += "PLAYER DATA\n";            
-            data += "Name, Turn Order, Longest Road, Largest Army, Times Robbed, Whacked Count, Wood Earned, Bricks Earned, Ore Earned, Sheep Earned, Wheat Earned, Gold Earned, Total Resources Earned, Times Blocked, Victory Points, Development Cards Bought, Longest Turn, Shortest Turn, Average Turn, Robber Activity, Knight Activity\n";
-            for (int i = 0; i < players.Length; i++) {
-                data += players[i].GetAllPlayerDataToString();
+
+            //INPUT SEAFARER CHECK AND STRING ADDENDUM HERE.. SHIPCOUNT SHIPSMOVED CHITS
+            string seafarerTitles = "";
+            if (isSeafarers) {
+                seafarerTitles = "Ships Bought, Ships Moved, Chits Earned,";
             }
+            data += $"Name, Turn Order, Longest Road, Largest Army, Times Robbed, Whacked Count, Wood Earned, Bricks Earned, Ore Earned, Sheep Earned, Wheat Earned, Gold Earned, Total Resources Earned, Times Blocked, Victory Points,{seafarerTitles} Development Cards Bought, Longest Turn, Shortest Turn, Average Turn, Robber Activity, Knight Activity\n";
+            for (int i = 0; i < players.Length; i++) {
+                data += players[i].GetAllPlayerDataToString(isSeafarers);
+            }
+
+            //go NAME, Opening Settlement Full Data, Opening PipCount, Opening Resources
+            data += "\n\nOPENING DATA, Opening Settlement 1, Opening Settlement 2, Total 'Pips', Opening Resources\n";
+
+            for (int i = 0; i < players.Length; i++) {
+                Settlement[] first = players[i].OpeningSettlements;
+                string resourcePartA = first[0].GetUniqueResourcesToString();
+                string resourcePartB = first[1].GetUniqueResourcesToString();
+                resourcePartA += resourcePartB;
+                string[] resourceList = resourcePartA.Split(' ');
+                string resources = "";
+                foreach (string resource in resourceList) {
+                    if (!resources.Contains(resource)) {
+                        resources += resource + " + ";
+                    }
+                }//END FOR LOOP
+                char[] resourcesBrokenUp = resources.ToCharArray();
+                resources = "";
+                for (int chrctr = 0; chrctr < resourcesBrokenUp.Length - 3; chrctr++) {
+                    resources += resourcesBrokenUp[chrctr];
+                }//END LOOP
+
+                data += $"{players[i].Name},{first[0].GetLocationsToStringSeparatedByPlus()}, {first[1].GetLocationsToStringSeparatedByPlus()}, {first[0].GetPipValue() + first[1].GetPipValue()}, {resources}\n";
+            }
+
+            Round[] rnd = mainBoard.Rounds;
+            data += "\n\nROUNDS,";
+            for (int i = 0; i < mainBoard.RoundsCount; i++) {
+                if (i < mainBoard.RoundsCount - 1) {
+                    data += $"Round {i + 1},";
+                } else {
+                    data += $"Final Round\n";
+                }//END IF
+            }//END FOR
+
+            data += "Round Duration:,";
+            for (int i = 0; i < rnd.Length; i++) {
+                data += $"{rnd[i].RoundTime.ToString(@"mm\:ss")},";
+            }//END FOR
+
+            data += "\nElapsed Game Time:,";
+            for (int i = 0; i < rnd.Length; i++) {
+                data += $"{rnd[i].GameTime.ToString(@"mm\:ss")},";
+            }//END FOR
+
+            data += "\nLongest Road(s),";
+            for (int i = 0; i < rnd.Length; i++) {
+                if (rnd[i].LongestRoad.Length > 1) {
+                    for (int p = 0; p < rnd[i].LongestRoad.Length; p++) {
+                        data += p == rnd[i].LongestRoad.Length - 1 ? $"{rnd[i].LongestRoad[p].Name} - {rnd[i].TopRoad}," : $"{rnd[i].LongestRoad[p].Name} + ";
+                    }
+                } else {
+                    data += $"{rnd[i].LongestRoad[0].Name} - {rnd[i].TopRoad},";
+                }
+            }//END FOR
+
+            data += "\nLargest Army(s),";
+            for (int i = 0; i < rnd.Length; i++) {
+                if (rnd[i].LargestArmy.Length > 1) {
+                    for (int p = 0; p < rnd[i].LargestArmy.Length; p++) {
+                        data += p == rnd[i].LargestArmy.Length - 1 ? $"{rnd[i].LargestArmy[p].Name} - {rnd[i].TopKnight}," : $"{rnd[i].LargestArmy[p].Name} + ";
+                    }
+                } else {
+                    data += $"{rnd[i].LargestArmy[0].Name} - {rnd[i].TopKnight},";
+                }
+            }//END FOR
+
+            data += "\nMost Victory Points,";
+            for (int i = 0; i < rnd.Length; i++) {
+                if (rnd[i].PointLeader.Length > 1) {
+                    for (int p = 0; p < rnd[i].PointLeader.Length; p++) {
+                        data += p == rnd[i].PointLeader.Length - 1 ? $"{rnd[i].PointLeader[p].Name} - {rnd[i].TopVicPoint}," : $"{rnd[i].PointLeader[p].Name} + ";
+                    }
+                } else {
+                    data += $"{rnd[i].PointLeader[0].Name} - {rnd[i].TopVicPoint},";
+                }
+            }//END FOR
+
+
             return data;
         }//END METHOD
+
+        private void Expander_Expanded(object sender,RoutedEventArgs e) {
+            //expPlayers.Height = mainWindow.Height - 30;
+            expPlayers.Height = double.NaN;
+            grdGameStats.Height = expPlayers.Height;
+
+            if (grdGameStats.RowDefinitions.Count < 1) {
+                RowDefinition[] playerStats = new RowDefinition[players.Length * 2];
+                for (int i = 0; i < playerStats.Length; i++) {
+                    playerStats[i] = new RowDefinition();
+                    if (i % 2 == 0) {playerStats[i].Height = new GridLength(25);}
+                    grdGameStats.RowDefinitions.Add(playerStats[i]);
+                }
+            }
+            
+            TextBlock[] statInfo = new TextBlock[players.Length * 2];            
+
+            for (int i = 0; i < statInfo.Length; i++) {
+                statInfo[i] = new TextBlock();
+                if (i % 2 == 0) {
+                    statInfo[i].HorizontalAlignment = HorizontalAlignment.Center;
+                    statInfo[i].VerticalAlignment = VerticalAlignment.Bottom;
+                    statInfo[i].Height = 20;
+                    statInfo[i].FontWeight = FontWeights.Bold;
+                    statInfo[i].FontSize = 15;
+                } else {
+                    statInfo[i].HorizontalAlignment = HorizontalAlignment.Left;
+                    statInfo[i].VerticalAlignment = VerticalAlignment.Top;
+                }
+            }
+            for (int i = 0; i < players.Length; i++) {
+                statInfo[i * 2].Text = players[i].Name;
+                statInfo[(i * 2) + 1].Text = players[i].GetGameStats();
+            }
+            for (int i = 0; i < statInfo.Length; i++) {
+                Grid.SetRow(statInfo[i], i);
+                Grid.SetColumn(statInfo[i], 1);
+                grdGameStats.Children.Add(statInfo[i]);
+            }
+        }//END METHOD
+
+        private void expPlayers_Collapsed(object sender,RoutedEventArgs e) {
+            expPlayers.Height = Double.NaN;
+            grdGameStats.Children.Clear();
+        }//END METHOD
+
+        private void btnGameSelect_Click(object sender,RoutedEventArgs e) {
+            //SELECT WHICH VERSION OF CATAN IS BEING PLAYED
+            Button selection = sender as Button;
+            if (selection.Name == "btnCatan") {
+                //STANDARD CATAN IS CHOSEN
+                isCatan = true;
+            } else if (selection.Name == "btnSeafarers") {
+                //SEAFARERS IS CHOSEN
+                isSeafarers = true;
+            } else {
+                return;
+            }
+            viewGameSelect.Visibility = Visibility.Collapsed;
+            viewBoardSetup.Visibility = Visibility.Visible;
+
+            if (isCatan) {
+                imgGold.Visibility = Visibility.Collapsed;
+                setupGold.Visibility = Visibility.Collapsed;
+                btnGold.Visibility = Visibility.Collapsed;
+                btnShip.Visibility = Visibility.Collapsed;
+                btnMove.Visibility = Visibility.Collapsed;
+                btnChit.Visibility = Visibility.Collapsed;
+                btnSettlement.Margin = new Thickness(402, 122, 0, 0);
+                btnDevCard.Margin = new Thickness(402, 172, 0, 0);
+                btnRoad.Margin = new Thickness(532, 122, 0, 0);
+                btnCity.Margin = new Thickness(532, 172, 0, 0);
+                btnKnight.Margin = new Thickness(402, 238,0,0);
+                btnVicPoint.Margin = new Thickness(532, 238, 0, 0);
+            }
+        }//END METHOD
+
     }//END WINDOW/PROGRAM CLASS
 }

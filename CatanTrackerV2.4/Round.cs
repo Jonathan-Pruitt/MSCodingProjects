@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 namespace CatanTrackV2 {
     internal class Round {
         //LOG EACH PLAYERS VIC POINTS PER ROUND, WHO IS LONGEST/LARGEST, TOTAL RESOURCES EARNED
-        private Player[] _players;
+
+        /* CONSIDER STORING THE ENTIRE PLAYER AT THIS POINT IF FUTURE ADDITIONAL DATA IS DESIRED */
+        /////////////////////
         private TimeSpan _currentGameTime;
         private TimeSpan _roundTime;
         private Player _longestPlayer;
@@ -17,16 +19,18 @@ namespace CatanTrackV2 {
         private Player[] _tiedLargest;
         private Player _vicPointLeader;
         private Player[] _tiedPointLead;
+        private int _longRoadCount;
+        private int _largeArmyCount;
+        private int _vicPountCount;
 
         public Round(Player[] players, TimeSpan gameTime, TimeSpan roundTime) {
-            _players = players;
             _currentGameTime = gameTime;
             _roundTime = roundTime;
 
             //CODE HERE TO STRAIN OUT SPECIFIC/LEADERSHIP DATA
-            SetLongest();
-            SetLargest();
-            SetLeader();
+            SetLongest(players);
+            SetLargest(players);
+            SetLeader(players);
 
         }//END CONSTRUCTOR
 
@@ -40,23 +44,43 @@ namespace CatanTrackV2 {
             get { return _roundTime; } 
         }
 
-        public Player LongestRoad {
-            get { return _longestPlayer; }
+        public Player[] LongestRoad {
+            get { 
+                return _longestPlayer != null ? new Player[]{_longestPlayer } : _tiedLongest;
+            }
         }
 
-        public Player LargestArmy {
-            get { return _largestPlayer; }
+        public Player[] LargestArmy {
+            get { 
+                return _largestPlayer != null ? new Player[]{_largestPlayer } : _tiedLargest;
+            }
         }
 
-        public Player PointLeader {
-            get { return _vicPointLeader; }
+        public Player[] PointLeader {
+            get { 
+                return _vicPointLeader != null ? new Player[]{_vicPointLeader } : _tiedPointLead;
+            }
+        }
+
+        public int TopRoad {
+            get {return _longRoadCount;}
+        }
+
+        public int TopKnight {
+            get {return _largeArmyCount;}
+        }
+
+        public int TopVicPoint {
+            get {return _vicPountCount;}
         }
 
         #endregion
 
-        private void SetLongest() {
+        private void SetLongest(Player[] _players) {
             int longestFound = 0;
-            Player longestPlayer = CheckLongest(out longestFound);
+            Player longestPlayer = CheckLongest(_players, out longestFound);
+            _longRoadCount = longestFound;
+
             if (longestPlayer != null) {
                 _longestPlayer = longestPlayer;
             } else {
@@ -66,6 +90,7 @@ namespace CatanTrackV2 {
                         index++;
                     }
                 }//END LOOP
+                
                 Player[] longBoys = new Player[index];
                 index = 0;
                 for (int i = 0; i < _players.Length;i++) {
@@ -76,7 +101,7 @@ namespace CatanTrackV2 {
                 _tiedLongest = longBoys;
             }//END IF
         }//END METHOD
-        private Player CheckLongest(out int longest) {
+        private Player CheckLongest(Player[] _players, out int longest) {
             longest = 0;
             foreach (Player player in _players) {
                 if (player.HasLongestRoad) {
@@ -98,9 +123,11 @@ namespace CatanTrackV2 {
             return isTied ? null : p;
         }//END METHOD
 
-        private void SetLargest() {
-            int largestFound = 0;
-            Player largestPlayer = CheckLargest(out largestFound);
+        private void SetLargest(Player[] _players) {
+            int largestFound;
+            Player largestPlayer = CheckLargest(_players, out largestFound);
+            _largeArmyCount = largestFound;
+
             if (largestPlayer != null) {
                 _largestPlayer = largestPlayer;
             } else {
@@ -110,6 +137,7 @@ namespace CatanTrackV2 {
                         index++;
                     }
                 }//END LOOP
+                
                 Player[] largeBoys = new Player[index];
                 index = 0;
                 for (int i = 0; i < _players.Length;i++) {
@@ -120,7 +148,7 @@ namespace CatanTrackV2 {
                 _tiedLargest = largeBoys;
             }//END IF
         }//END METHOD
-        private Player CheckLargest(out int largest) {
+        private Player CheckLargest(Player[] _players, out int largest) {
             largest = 0;
             foreach (Player player in _players) {
                 if (player.HasLargestArmy) {
@@ -142,9 +170,11 @@ namespace CatanTrackV2 {
             return isTied ? null : p;
         }//END METHOD
 
-        private void SetLeader() {
-            int topVP = 0;
-            Player leader = CheckLeader(out topVP);
+        private void SetLeader(Player[] _players) {
+            int topVP;
+            Player leader = CheckLeader(_players, out topVP);
+            _vicPountCount = topVP;
+
             if (leader != null) {
                 _vicPointLeader = leader;
             } else {
@@ -164,7 +194,7 @@ namespace CatanTrackV2 {
                 _tiedPointLead = leadBoys;
             }//END IF
         }//END METHOD
-        private Player CheckLeader(out int highest) {
+        private Player CheckLeader(Player[] _players, out int highest) {
             highest = 0;
             
             bool isTied = false;

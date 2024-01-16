@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace CatanTracker {
     internal class Player {
@@ -15,6 +16,8 @@ namespace CatanTracker {
         private int _turnInGame;
         private int _longestRoadLength = 1;
         private int _roadCount = 2;
+        private int _shipCount = 0;
+        private int _shipsMoved = 0;
         private int _stolenFromCount = 0;
         private int _knightCount = 0;
         private int _whackedCount = 0;
@@ -26,11 +29,13 @@ namespace CatanTracker {
         private int _totalWheat = 0;
         private int _timesBlocked = 0;
         private int _victoryPoints = 0;
+        private int _chitPoints = 0;
         private int _devCardsBought = 0;
         private string _robberActivity = ""; //"Miles stole from Jackie\n" (if a card wasn't stolen, have a void and say "Miles blocked Jackie with robber")
         private string _knightActivity = ""; //"Miles knighted Jackie\n" (if a card wasn't stolen, have a void and say "Miles blocked Jackie with knight")
         private TimeSpan[] _turnTimes;   
         private Settlement[] _settlementObjects;
+        private Settlement[] _openingSettlements;
         private City[] _cityObjects;
 
 #region CONSTRUCTORS
@@ -64,6 +69,7 @@ namespace CatanTracker {
                 _turnTimes = new TimeSpan[1] {turnTime };
             }
         }//END METHOD
+
 
         public void AddSettlement(Settlement newSettlement) {
             if (_settlementObjects != null) {
@@ -191,7 +197,7 @@ namespace CatanTracker {
                 settlements[i] = _settlementObjects[i];
             }
             return settlements;
-        }
+        }//END METHOD
 
         public string[] GetSettlementsAsString() {
             if (_settlementObjects == null) {return null; }
@@ -202,6 +208,27 @@ namespace CatanTracker {
                 settlementData[i] = spots[i].GetLocationsToString();
             }
             return settlementData;
+        }//END METHOD
+
+        public City[] GetCities() {
+            if (_cityObjects == null) {return null;}
+
+            City[] cities = new City[_cityObjects.Length];
+            for (int i = 0; i < cities.Length; i++) {
+                cities[i] = _cityObjects[i];
+            }
+            return cities;
+        }//END METHOD
+
+        public string[] GetCitiesAsString() {
+            if (_cityObjects == null) {return null; }
+
+            string[] cityNames = new string[_cityObjects.Length];
+            City[] spots = GetCities();
+            for (int i = 0; i < cityNames.Length; i++) {
+                cityNames[i] = spots[i].GetLocationsToString();
+            }
+            return cityNames;
         }//END METHOD
 
         public void ConvertSettlementToCity(Settlement settlement) {
@@ -252,6 +279,37 @@ namespace CatanTracker {
             }
         }//END METHOD
 
+        public string GetGameStats(){     
+
+            string longOrLarge = "";
+            if (HasLongestRoad) {longOrLarge += "Longest Road\n"; }
+            if (HasLargestArmy) {longOrLarge += "Largest Army\n"; }
+            string[] settlements = GetSettlementsAsString();
+            string settles = "";
+            if (settlements != null) {
+                foreach (string item in settlements) {
+                    settles += item + "\n";
+                }
+            }
+
+            string[] cityArray = GetCitiesAsString();
+            string cities = "";
+            if (cityArray != null) {
+                foreach (string item in cityArray) {
+                    cities += item + "\n";
+                }
+            }
+            string settlementIntro = "Settlements:\n";
+            string citiesIntro = "Cities:\n";
+            if (settles == "") {settlementIntro = "";}
+            if (cities == "") {citiesIntro = "";}
+
+            string final = $"Victory Points: {VictoryPoints}\n{longOrLarge}{settlementIntro}{settles}{citiesIntro}{cities}";
+            
+            return final ;
+
+        }//END METHOD
+
         public TimeSpan GetLongestTurn() {
             TimeSpan longestTime = new TimeSpan();
             for (int i = 0; i < _turnTimes.Length; i++) {
@@ -281,9 +339,13 @@ namespace CatanTracker {
             return averageTime;
         }//END METHOD
 
-        public string GetAllPlayerDataToString() {
+        public string GetAllPlayerDataToString(bool gameIsSeafarers) {
             string playerData = "";
-            playerData += $"{Name}, {_turnInGame}, {_longestRoadLength}, {_knightCount}, {_stolenFromCount}, {_whackedCount}, {_totalWood}, {_totalBrick}, {_totalOre}, {_totalSheep}, {_totalWheat}, {_totalGold}, {AllResources}, {_timesBlocked}, {VictoryPoints}, {_devCardsBought}, {GetLongestTurn().ToString(@"hh\:mm\:ss")}, {GetShortestTurn().ToString(@"hh\:mm\:ss")}, {GetAverageTurn().ToString(@"hh\:mm\:ss")}, {_robberActivity}, {_knightActivity}\n";
+            string seafarers = "";
+            if (gameIsSeafarers) {
+                seafarers = $"{_shipCount},{_shipsMoved},{_chitPoints},";
+            }
+            playerData += $"{Name}, {_turnInGame}, {_longestRoadLength}, {_knightCount}, {_stolenFromCount}, {_whackedCount}, {_totalWood}, {_totalBrick}, {_totalOre}, {_totalSheep}, {_totalWheat}, {_totalGold}, {AllResources}, {_timesBlocked}, {VictoryPoints},{seafarers} {_devCardsBought}, {GetLongestTurn().ToString(@"hh\:mm\:ss")}, {GetShortestTurn().ToString(@"hh\:mm\:ss")}, {GetAverageTurn().ToString(@"hh\:mm\:ss")}, {_robberActivity}, {_knightActivity}\n";
             return playerData;
         }
 
@@ -293,6 +355,10 @@ namespace CatanTracker {
 
         public bool IsWinner {
             get {return _isWinner; } set { _isWinner = value; }
+        }
+
+        public Settlement[] OpeningSettlements {
+            get {return _openingSettlements; } set { _openingSettlements = value; }
         }
 
         public int AllResources {
@@ -305,10 +371,10 @@ namespace CatanTracker {
                 fullCount += _totalWheat;
                 return fullCount;
             }                   
-        }//END METHOD
+        }//END PROPERTY
 
 #endregion
-        /// /// //////////////// ///////////////////////////////////////////////////TESTING THIS///////////////////////////////////////////////
+        
                                  
 #region PROPERTIES                                 
         public string Name {
@@ -347,8 +413,20 @@ namespace CatanTracker {
             get {return _devCardsBought;} set { _devCardsBought = value; }
         }
 
+        public int ChitPoints {
+            get {return _chitPoints;} set { _chitPoints = value;}
+        }
+
         public int RoadCount {
             get {return _roadCount;} set { _roadCount = value; }
+        }
+        
+        public int ShipCount {
+            get {return _shipCount;} set { _shipCount = value; }
+        }
+
+        public int MovedShips {
+            get {return _shipsMoved; } set { _shipsMoved = value; }
         }
 
         public int VictoryPoints {

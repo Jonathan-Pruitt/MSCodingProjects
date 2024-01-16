@@ -1,8 +1,10 @@
-﻿using System;
+﻿using CatanTrackV2;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -10,12 +12,8 @@ using System.Xaml.Schema;
 
 namespace CatanTracker {
     internal class GameBoard {
-        private int[] _brickPips;
-        private int[] _goldPips;
-        private int[] _orePips;
-        private int[] _sheepPips;
-        private int[] _wheatPips;
-        private int[] _woodPips;
+        private int _gameType = 0; //0-Standard ; 1- Seafarers
+
         private int _currentRound = 1;
         private int[] _rollCounter = new int[11];
         private int _blockedNumber = 0;
@@ -25,19 +23,25 @@ namespace CatanTracker {
         private Player _hasLargestArmy;
         private Player _hasLongestRoad;
         private Player _winner;
+        private Round[] _rounds;
 
         private Location[] _hexArray;
         private Location _blockedLocation;
 
 
         #region UPDATED GAMEBOARD PROPS AND METHODS
-        public GameBoard(Location[] hexArray) {
-            _hexArray = hexArray;  /// //////////////////////////////////////////////////////////////CHANGES
-            for (int i = 0; i < _hexArray.Length; i++) {
-                for (int v = i + 1; v < _hexArray.Length; v++) {
+        public GameBoard(Location[] hexArray, int gameType = 0) {
+            _gameType = gameType;
+            _hexArray = new Location[hexArray.Length + 1];
+            for (int i = 0; i < hexArray.Length; i++) {
+                _hexArray[i] = hexArray[i];
+            }
+            //END TEST
+            for (int i = 0; i < hexArray.Length + 1; i++) {
+                for (int v = i + 1; v < hexArray.Length; v++) {
                     if (_hexArray[i].LocationToString() == _hexArray[v].LocationToString()) {
                         if (_hexArray[i].ID != "b") {
-                            for (int f = v + 1; f < _hexArray.Length; f++) {
+                            for (int f = v + 1; f < hexArray.Length; f++) {
                                 if (_hexArray[v].LocationToString() == _hexArray[f].LocationToString()) {
                                     _hexArray[f].IsDuplicate = true;
                                     _hexArray[f].ID = "c";
@@ -49,9 +53,10 @@ namespace CatanTracker {
                     }
                 }
             }
+            _hexArray[hexArray.Length] = new Location(0, "DESERT");
         }//END CONSTRUCTOR
 
-        public Location[] GetDuplicatesByToken(int token) {  /// //////////////////////////////////////////////////////////////CHANGES
+        public Location[] GetDuplicatesByToken(int token) { 
             Location[] temp = GetLocationsByToken(token);
             int index = 0;
             for (int i = 0; i < temp.Length; i++) {
@@ -69,7 +74,7 @@ namespace CatanTracker {
             return final;
         }//END METHOD
 
-        public Location GetLocationByStringComparison(string fullLocationString) { /// //////////////////////////////////////////////////////////////CHANGES
+        public Location GetLocationByStringComparison(string fullLocationString) { 
             for (int i = 0; i < _hexArray.Length; i++) {
                 if (_hexArray[i].LocationToString() == fullLocationString) {
                     return _hexArray[i];
@@ -78,6 +83,19 @@ namespace CatanTracker {
             return null;
         }
 
+        public int GameType { get { return _gameType; } }
+
+        public string GameTypeString { 
+            get {
+                string[] gameTypeArray = {"Catan", "Seafarers"};
+                return gameTypeArray[_gameType];
+            }
+        }
+
+        public Round[] Rounds { get { return _rounds; } }
+
+        public int RoundsCount { get { return _rounds != null ? _rounds.Length : 0; } }
+        
         public Stopwatch GameClock {
             get { return _gameClock; }
         }
@@ -89,6 +107,21 @@ namespace CatanTracker {
         public Player Winner {
             get {return _winner; } set {_winner = value;} 
         }
+
+        public void AddRound(Player[] players, TimeSpan gameTime) {
+            if (_rounds != null) {
+                Round[] update = new Round[_rounds.Length + 1];
+                int index = 0;
+                while (index < _rounds.Length) {
+                    update[index] = _rounds[index];
+                    index++;
+                }//END LOOP
+                update[index] = new Round(players, gameTime, gameTime - _rounds[index - 1].GameTime);
+                _rounds = update;
+            } else {
+                _rounds = new Round[]{new Round(players, gameTime, gameTime)};
+            }
+        }//END METHOD
 
         public Location[] GetLocationsByToken(int token) {
             Location[] locations = null;
@@ -227,7 +260,7 @@ namespace CatanTracker {
         private int _tokenNum; 
         private string _resource;
         
-        /// //////////////////////////////////////////////////////////////CHANGES
+        private int[] _pipCountArray = new int[]{0, 0, 1, 2, 3, 4, 5, 0, 5, 4, 3, 2, 1};
         private string _id;
         private bool _isDuplicate = false;
 
@@ -235,7 +268,7 @@ namespace CatanTracker {
             _tokenNum = tokenNum; 
             _resource = resource;
 
-            /// //////////////////////////////////////////////////////////////CHANGES
+            
             _id = "a";
         }
         public int Token {
@@ -247,18 +280,22 @@ namespace CatanTracker {
         }
 
         public bool IsDuplicate {
-            get {return _isDuplicate;} set { _isDuplicate = value; } /// //////////////////////////////////////////////////////////////CHANGES
+            get {return _isDuplicate;} set { _isDuplicate = value; }
         }
 
         public string ID {
-            get {return _id;  } set { _id = value; } /// //////////////////////////////////////////////////////////////CHANGES
+            get {return _id;  } set { _id = value; } 
         }
 
         public string LocationToString() {
             string subID = "";
             if (_isDuplicate) {subID = _id;}
-            string response = $"{_resource}-{_tokenNum}{subID}"; /// //////////////////////////////////////////////////////////////CHANGES
+            string response = $"{_resource}-{_tokenNum}{subID}"; 
             return response;
+        }//END METHOD
+
+        public int GetPipInfo() {
+            return _pipCountArray[_tokenNum];
         }
     }//END CLASS
 
@@ -288,6 +325,24 @@ namespace CatanTracker {
             get {return 1;}
         }
 
+        public int GetPipValue() {
+            int pipValue = 0;
+            foreach (Location hex in _hexes) {
+                pipValue += hex.GetPipInfo();
+            }//END FOR
+            return pipValue;
+        }//END METHOD
+
+        public string GetUniqueResourcesToString() {
+            string uniqueResources = "";
+            foreach (Location hex in _hexes) {
+                if (!uniqueResources.Contains(hex.Resource)) {
+                    uniqueResources += $"{hex.Resource} ";
+                }
+            }
+            return uniqueResources;
+        }//END METHOD
+
         public string GetResource(int token) {
             string resource = "";
             foreach (Location location in _hexes) {
@@ -302,13 +357,27 @@ namespace CatanTracker {
             return resource;
         }//END METHOD
 
-        public string GetLocationsToString() { /// //////////////////////////////////////////////////////////////CHANGES
+        public string GetLocationsToString() { 
             string locations = "";
             foreach (Location location in _hexes) {
                 if (location != null) {
-                    //locations += $"{location.Token}-{location.Resource}; ";
                     locations += $"{location.LocationToString()}; ";
                 }
+            }//END LOOP
+            return locations;
+        }//END METHOD
+
+        public string GetLocationsToStringSeparatedByPlus() { 
+            string locations = "";
+            foreach (Location location in _hexes) {
+                if (location != null) {
+                    locations += $"{location.LocationToString()} + ";
+                }
+            }//END LOOP
+            char[] resourcesBrokenUp = locations.ToCharArray();
+            locations = "";
+            for (int chrctr = 0; chrctr < resourcesBrokenUp.Length - 3; chrctr++) {
+                locations += resourcesBrokenUp[chrctr];
             }//END LOOP
             return locations;
         }//END METHOD
