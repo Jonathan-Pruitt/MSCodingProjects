@@ -1,11 +1,37 @@
 //#region SNOW CLASS
 
+///CHANGE CONSTANTS TO EFFECT SNOW WEBSITE
+const SNOW_SIZE_BASE = 2;
+const SNOW_SIZE_RANGE = 5;
+const SNOW_BASE_RED_VAL = 0; //VALUE SHOULD BE NO GREATER THAN 255
+const SNOW_BASE_GREEN_VAL = 145; //VALUE SHOULD BE NO GREATER THAN 255
+const SNOW_BASE_BLUE_VAL = 0; //VALUE SHOULD BE NO GREATER THAN 255
+const SNOW_BASE_OPACITY_VAL = .9; //VALUE SHOULD BE BETWEEN 0 - 1
+
+const TOTAL_SNOWFLAKES = 1000;
+const BACKGROUND_MIN_VALUE = 10; //MIN VALUE SHOULD BE GREATER THAN 0
+const BACKGROUND_MAX_VALUE = 100; //MAX VALUE SHOULD NOT EXCEED 255
+//BACKGROUND START VALUE SHOULD BE BETWEEN BACKGROUND_MAX/MIN VALUES
+const BACKGROUND_START_VAL_RED = 33;
+const BACKGROUND_START_VAL_GREEN = 95;
+const BACKGROUND_START_VAL_BLUE = 33;
+const BACKGROUND_DELTA_RED = .6;
+const BACKGROUND_DELTA_GREEN =.25;
+const BACKGROUND_DELTA_BLUE = .1;
+const BACKGROUND_COLOR_DELTA_ARRAY = [BACKGROUND_DELTA_RED, BACKGROUND_DELTA_GREEN, BACKGROUND_DELTA_BLUE];
+const PUSH_RADIUS = 100;
+const KNOCKBACK_MULTIPLIER = 2;
+const KNOCKBACK_DECAY = .9;
+const SNOW_STUN_TIME_VECTOR = 100;
+
+
+
 class Snow {
     //CONSTRUCTOR    
     constructor(location = null) {
         //CREATE SNOW PROPERTIES
         this.color = RandomColor();
-        this.radius = Math.random() * 5 + 2;        
+        this.radius = Math.random() * SNOW_SIZE_RANGE + SNOW_SIZE_BASE;        
         
         this.x = Math.random() * storedWindowWidth;
 
@@ -40,6 +66,8 @@ class Snow {
 
 //#region BEGIN MAIN
 
+const fullPage = document.getElementById("page");
+
 //ASSIGNS CANVAS ELEMENT TO VARIABLE
 const screenElement = document.getElementById("snowCan");
 
@@ -47,7 +75,7 @@ const screenElement = document.getElementById("snowCan");
 const screen = screenElement.getContext("2d");
 
 //SETS BACKGROUND (ARRAY HOLDING OBJECTS - BOOL-RISE, INT-VAL)
-const rgbCol = [{rise : true, val : 33}, {rise : true, val : 66}, {rise : true, val : 99}];
+const rgbCol = [{rise : true, val : BACKGROUND_START_VAL_RED}, {rise : true, val : BACKGROUND_START_VAL_GREEN}, {rise : true, val : BACKGROUND_START_VAL_BLUE}];
 
 //EMPTY ARRAY FOR SNOW
 const snowHolder = [];
@@ -59,12 +87,14 @@ let storedWindowHeight = window.innerHeight;
 //SET SCREEN ELEMENT TO FULL WINDOW
 screenElement.width = storedWindowWidth;
 screenElement.height = storedWindowHeight;
+fullPage.width = storedWindowWidth;
+fullPage.height = storedWindowHeight;
 
 //GENERATE BACKGROUND COLORS ???
 UpdateScreenColor(rgbCol[0],rgbCol[1],rgbCol[2]);
 
 //CREATING 1000 SNOW OBJECTS
-for (let i = 0; i<1000; i++) {
+for (let i = 0; i<TOTAL_SNOWFLAKES; i++) {
     snowHolder.push(new Snow());
 }//END FOR LOOP
 
@@ -93,7 +123,7 @@ function PushSnow(data) {
 
 function CheckPush(flake, x, y) {
     //HOW FAR SNOW WILL BE PUSHED AWAY ???
-    let pushRadius = 100;
+    let pushRadius = PUSH_RADIUS;
     
     //SET VARIABLE FOR X/Y ABSOLUTE DITANCE FROM CLICK
     let xProx = Math.abs(flake.x - x);
@@ -107,12 +137,11 @@ function CheckPush(flake, x, y) {
         
         //LENGTH OF TIME THE SNOWFLAKES ARE IN HIT-STUN ???
         //HOW MANY POSITIONAL POINTS THE SNOWFLAKES WILL BE PUSHED BEFORE NORMAL MOVEMENT ???
-        flake.pushTime = (Math.random() * 20) + (flake.intensity * 3);                           
-        // flake.pushTime = 5000;                           
+        flake.pushTime = (Math.random() * 10) + SNOW_STUN_TIME_VECTOR;                                                              
         
         //CONTROLS DIRECTION OF PUSH x-for x y for y
-        flake.pushdx = (flake.x - x) * flake.intensity;        
-        flake.pushdy = (flake.y - y) * flake.intensity;
+        flake.pushdx = (flake.x - x) * flake.intensity * KNOCKBACK_MULTIPLIER;        
+        flake.pushdy = (flake.y - y) * flake.intensity * KNOCKBACK_MULTIPLIER;
     }
 }//END FUNCTION
 
@@ -120,12 +149,12 @@ function CheckPush(flake, x, y) {
 function RandomColor() {    
     return (
         "rgba(" +
-        (Math.floor((Math.random() * 55) + 200)) +
+        (Math.floor((Math.random() * (255 - SNOW_BASE_RED_VAL)) + SNOW_BASE_RED_VAL)) +
         ", " +
-        (Math.floor((Math.random() * 55) + 200)) + ", " +
-        (Math.floor((Math.random() * 55) + 200)) +
+        (Math.floor((Math.random() * (255 - SNOW_BASE_GREEN_VAL)) + SNOW_BASE_GREEN_VAL)) + ", " +
+        (Math.floor((Math.random() * (255 - SNOW_BASE_BLUE_VAL)) + SNOW_BASE_BLUE_VAL)) +
         ", " +
-        Math.floor((Math.random() * 5) + 3)/ 10 +
+        Math.floor((Math.random() * (9 - SNOW_BASE_OPACITY_VAL)) +SNOW_BASE_OPACITY_VAL)/ 10 +
         ")"
     );
 }//END FUNCTION
@@ -136,22 +165,22 @@ function UpdateSnow() {
         let currentSnow = snowHolder[i];
         
         currentSnow.Draw();
-        
-        //CHECK FOR NEG/POS AND ASSIGN L/R DIRECTION ACCORDINGLY ???
+        currentSnow.sway += currentSnow.swayForce;
+                
         if (currentSnow.pushTime <= 0) {
             currentSnow.y += currentSnow.dy;
-
-            currentSnow.sway += currentSnow.swayForce;
             currentSnow.x += Math.sin(currentSnow.sway) + currentSnow.dx;
         } else {
             currentSnow.pushTime--;
+            currentSnow.y += currentSnow.dy * .60;
+            currentSnow.x += (Math.sin(currentSnow.sway) + currentSnow.dx) * .60;
+            
             currentSnow.y += currentSnow.pushdy;
-            currentSnow.y += currentSnow.dy;
             currentSnow.x += currentSnow.pushdx;
 
             currentSnow.pushdy *= currentSnow.intensity;
             currentSnow.pushdx *= currentSnow.intensity;
-            currentSnow.intensity *= .99;
+            currentSnow.intensity *= KNOCKBACK_DECAY;
         }
 
         
@@ -168,8 +197,8 @@ function UpdateScreenColor() {
     screen.fillRect(0,0,screenElement.width, screenElement.height);    
     
     for (let i = 0; i < rgbCol.length; i++) {
-        rgbCol[i].val += rgbCol[i].rise ? (i+1)*0.5 : (i+1)*-0.5;
-        if (rgbCol[i].val > 100 || rgbCol[i].val < 10) {
+        rgbCol[i].val += rgbCol[i].rise ? BACKGROUND_COLOR_DELTA_ARRAY[i] : -BACKGROUND_COLOR_DELTA_ARRAY[i];
+        if (rgbCol[i].val > BACKGROUND_MAX_VALUE || rgbCol[i].val < BACKGROUND_MIN_VALUE) {
             rgbCol[i].rise = !rgbCol[i].rise;
         }        
     }        
@@ -182,6 +211,8 @@ function UpdateAnimation() {
         
         screenElement.width = storedWindowWidth;
         screenElement.height = storedWindowHeight;
+        fullPage.width = storedWindowWidth;
+        fullPage.height = storedWindowHeight;
     }
     UpdateScreenColor();
     UpdateSnow();
