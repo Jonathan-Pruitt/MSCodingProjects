@@ -19,15 +19,8 @@ h1 {
     justify-self: center;
     display: flex;
     font-weight: bold;
+    font-family: monospace;
     font-size: 300%;
-    color: #A088FF;
-    text-shadow: 5px 10px 6px #000000;
-    transition-duration: .5s;
-}
-
-h1:hover {
-    font-size : 600%;
-    letter-spacing: 0.2em;
-    transition-duration: 1s;
-    color: red;
+    color: #d3c8ff;
+    text-shadow: 0 10px 6px #0F0F0F;
 }

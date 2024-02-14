@@ -2,25 +2,25 @@
 
 ///CHANGE CONSTANTS TO EFFECT SNOW WEBSITE
 const SNOW_SIZE_BASE = 2;
-const SNOW_SIZE_RANGE = 5;
-const SNOW_BASE_RED_VAL = 0; //VALUE SHOULD BE NO GREATER THAN 255
-const SNOW_BASE_GREEN_VAL = 145; //VALUE SHOULD BE NO GREATER THAN 255
-const SNOW_BASE_BLUE_VAL = 0; //VALUE SHOULD BE NO GREATER THAN 255
-const SNOW_BASE_OPACITY_VAL = .9; //VALUE SHOULD BE BETWEEN 0 - 1
+const SNOW_SIZE_RANGE = 7;
+const SNOW_BASE_RED_VAL = 255; //VALUE SHOULD BE NO GREATER THAN 255
+const SNOW_BASE_GREEN_VAL = 0; //VALUE SHOULD BE NO GREATER THAN 255
+const SNOW_BASE_BLUE_VAL = 100; //VALUE SHOULD BE NO GREATER THAN 255
+const SNOW_BASE_OPACITY_VAL = 3; //VALUE SHOULD BE BETWEEN 0 - 1
 
 const TOTAL_SNOWFLAKES = 1000;
-const BACKGROUND_MIN_VALUE = 10; //MIN VALUE SHOULD BE GREATER THAN 0
+const BACKGROUND_MIN_VALUE = 0; //MIN VALUE SHOULD BE GREATER THAN 0
 const BACKGROUND_MAX_VALUE = 100; //MAX VALUE SHOULD NOT EXCEED 255
 //BACKGROUND START VALUE SHOULD BE BETWEEN BACKGROUND_MAX/MIN VALUES
-const BACKGROUND_START_VAL_RED = 33;
-const BACKGROUND_START_VAL_GREEN = 95;
-const BACKGROUND_START_VAL_BLUE = 33;
+const BACKGROUND_START_VAL_RED = 5;
+const BACKGROUND_START_VAL_GREEN = 5;
+const BACKGROUND_START_VAL_BLUE = 5;
 const BACKGROUND_DELTA_RED = .6;
-const BACKGROUND_DELTA_GREEN =.25;
-const BACKGROUND_DELTA_BLUE = .1;
+const BACKGROUND_DELTA_GREEN = 0;
+const BACKGROUND_DELTA_BLUE = .3;
 const BACKGROUND_COLOR_DELTA_ARRAY = [BACKGROUND_DELTA_RED, BACKGROUND_DELTA_GREEN, BACKGROUND_DELTA_BLUE];
-const PUSH_RADIUS = 100;
-const KNOCKBACK_MULTIPLIER = 2;
+const PUSH_RADIUS = 150;
+const KNOCKBACK_MULTIPLIER = 2.5;
 const KNOCKBACK_DECAY = .9;
 const SNOW_STUN_TIME_VECTOR = 100;
 
@@ -56,9 +56,38 @@ class Snow {
 
     //DRAWS THE SNOW TO CANVAS
     Draw = function () {
+        //STANDARD SNOW DRAWING
+
         screen.beginPath();
         screen.fillStyle = this.color; //set circle color
         screen.fillRect(this.x, this.y, this.radius, this.radius);                    
+
+        ///FOR VALENTINE'S DAY ONLY
+        /* 
+        let x = this.x;
+        let y = this.y;
+        let rad = this.radius;
+        let hRad = rad * 0.5;
+        let qRad = rad * 0.25;
+        let eRad = rad * 0.125;
+        let col = this.color;
+        screen.beginPath();
+        
+        //LEFT HALF OF HEART
+        screen.moveTo(x, y - hRad);          
+        screen.bezierCurveTo(x, y - hRad - qRad, x - eRad, y - rad, x - hRad, y - rad);
+        screen.bezierCurveTo(x - qRad - hRad, y - rad, x - rad, y - hRad - qRad, x - rad, y - hRad);
+        screen.bezierCurveTo(x - rad, y + qRad, x - eRad, y + hRad + qRad, x, y + rad);        
+
+        //RIGHT HALF OF HEART
+        screen.moveTo(x, y - hRad);  
+        screen.bezierCurveTo(x, y - hRad - qRad, x + eRad, y - rad, x + hRad, y - rad);
+        screen.bezierCurveTo(x + qRad + hRad, y - rad, x + rad, y - hRad - qRad, x + rad, y - hRad);
+        screen.bezierCurveTo(x + rad, y + qRad, x + eRad, y + hRad + qRad, x, y + rad);        
+        
+        screen.fillStyle = col;
+        screen.fill();
+        */
     }            
 }//END CLASS
 
