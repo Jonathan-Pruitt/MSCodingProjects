@@ -16,13 +16,13 @@
 const FW_TOTAL      = 5;
 const FW_RATE       = 3;
 const FW_TAIL       = 50; 
-const FW_GROW       = 0.05;
+const FW_GROW       = 0.5;
 const FW_Smin       = 2;
-const FW_Smax       = 20;
-const FW_Sb         = 3;
-const FW_Sr         = 10;
+const FW_Smax       = 65;
+const FW_Sb         = 15;
+const FW_Sr         = 15;
 const FW_SPbi       = 7;
-const FW_SPri       = 7;
+const FW_SPri       = 4;
 const FW_SPdb       = 2;
 const FW_SPdr       = 4;
 const FW_X_AGr      = 10;
@@ -49,7 +49,7 @@ class Firework {
         this.tailColor = colors.tail;
         this.size = Math.random() * FW_Sb + FW_Sr;
         this.initSize = this.size;
-        this.growth = (Math.random() - 0.5) * FW_GROW;
+        this.growth = (Math.random() - 0.75) * FW_GROW;
         this.tail = [];        
         
         let fifthWindow = storedWindowWidth * 0.2;
@@ -372,7 +372,7 @@ function UpdateScreenColor() {
     
     for (let i = 0; i < rgbCol.length; i++) {
         if (rgbCol[i] > BG_C_ARRAY[i]) {
-            rgbCol[i] -= 10;
+            rgbCol[i] -= 7;
             if (rgbCol[i] < 0) {
                 rgbCol[i] = BG_C_ARRAY[i];
             }
