@@ -154,10 +154,10 @@ function PopulateForecastData(forecast) {
         }
         if (forecast[i].isDaytime) {
             if (dayIndex < 7) {
-                days[dayIndex++].innerHTML = `<b>${forecast[i].temperature}&deg;</b><br>Precip %<br><strong>${rain}</strong><br>Humidity<br><strong>${forecast[i].relativeHumidity.value}%</strong>`;                
+                days[dayIndex++].innerHTML = `<b>${forecast[i].temperature}&deg;</b><br>Precip %<br><strong>${rain}</strong>`;                
             }
         } else {
-            nights[nightIndex++].innerHTML = `<b>${forecast[i].temperature}&deg;</b><br>Precip %<br><strong>${rain}</strong><br>Humidity<br><strong>${forecast[i].relativeHumidity.value}%</strong>`;                            
+            nights[nightIndex++].innerHTML = `<b>${forecast[i].temperature}&deg;</b><br>Precip %<br><strong>${rain}</strong>`;                            
         }
         if (periods[i].clientHeight > largestCellY || periods[i].clientWidth > largestCellX) {
             largestCellY = periods[i].clientHeight;
@@ -257,12 +257,11 @@ function PeriodClicked() {
     let clickedCell = GetValue(this.outerHTML);
     let forecastData = periodsData[clickedCell];
     let forecast = forecastData.detailedForecast;
-    let image   = forecastData.icon;
+    let image   = "https://api.weather.gov/" + forecastData.icon;
     let alt     = forecastData.shortForecast;
     let temp    = forecastData.temperature;
-    let humidity= forecastData.relativeHumidity.value;
 
-    display.innerHTML = `<h1>Detailed Forecast</h1><br><p>${forecast}</p><img src=${image} alt=${alt}><span><strong>${temp}&deg;F</strong> and ${humidity}% humidity</span>`;
+    display.innerHTML = `<h1>Detailed Forecast</h1><br><p>${forecast}</p><img src=${image} alt=${alt}><span><strong>${temp}&deg;F</strong></span>`;
 }
 
 function GetValue(text){
